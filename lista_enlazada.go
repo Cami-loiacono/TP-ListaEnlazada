@@ -3,7 +3,7 @@ package lista
 const (
 	_CAPACIDAD_INICIAL = 10
 	_MENSAJE_PANICO = "La lista está vacía"
-	_MENSAJE_PANICO_ITERADOR = "El iterador está al final de la lista"
+	_MENSAJE_PANICO_ITERADOR = "El iterador termino de iterar"
 )
 
 type listaEnlazada[T any] struct {
@@ -14,11 +14,54 @@ type listaEnlazada[T any] struct {
 
 type iteradorLista[T any] struct {
 	actual *nodo[T]
+	lista  *listaEnlazada[T]
 }
 
 type nodo[T any] struct {
 	elemento T
 	siguiente *nodo[T]
+}
+
+/*
+En caso que se invoque a VerActual, Avanzar o Borrar sobre un iterador que ya haya iterado todos los elementos, debe entrar en pánico con un mensaje El iterador termino de iterar.
+*/
+
+func (iter *iteradorLista[T]) VerActual() T {
+	if iter.actual == nil {
+		panic(_MENSAJE_PANICO_ITERADOR)
+	}
+	return iter.actual.elemento
+}
+
+func (iter *iteradorLista[T]) HayAlgoMas() bool {
+	return iter.actual != nil
+}
+
+func (iter *iteradorLista[T]) Avanzar() {
+	if iter.actual == nil {
+		panic(_MENSAJE_PANICO_ITERADOR)
+	}
+	iter.actual = iter.actual.siguiente
+}
+
+func (iter *iteradorLista[T]) Insertar(elemento T) {
+	nuevoNodo := crearNodo(elemento)
+	aux := iter.actual
+	iter.actual = nuevoNodo
+	nuevoNodo.siguiente = aux
+	iter.lista.cantidad++
+}
+
+func (iter *iteradorLista[T]) Borrar() T {
+	if iter.actual == nil {
+		panic(_MENSAJE_PANICO_ITERADOR)
+	} else if iter.actual == iter.lista.ultimo {
+		
+	}
+	dato := iter.actual.elemento
+	iter.actual = iter.actual.siguiente
+	iter.lista.cantidad--
+	return dato
 }
 
 func crearNodo[T any](elemento T) *nodo[T] {
@@ -102,4 +145,14 @@ func (lista *listaEnlazada[T]) VerUltimo() T {
 
 func (lista *listaEnlazada[T]) Largo() int {
 	return lista.cantidad
+}
+
+//Iterador interno
+func (lista *listaEnlazada[T]) Iterar() Iterador[T] {
+
+}
+
+//devuelve una instancia del iterador externo (el struct iteradorLista)
+func (lista *listaEnlazada[T]) Iterador() IteradorLista[T] {
+
 }
