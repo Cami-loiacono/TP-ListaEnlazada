@@ -2,7 +2,7 @@ package lista
 
 const (
 	_CAPACIDAD_INICIAL       = 10
-	_MENSAJE_PANICO          = "La lista está vacía"
+	_MENSAJE_PANICO          = "La lista esta vacia"
 	_MENSAJE_PANICO_ITERADOR = "El iterador termino de iterar"
 )
 
@@ -95,6 +95,7 @@ func (lista *listaEnlazada[T]) EstaVacia() bool {
 
 func (lista *listaEnlazada[T]) InsertarPrimero(elemento T) {
 	nuevoNodo := crearNodo(elemento)
+	nuevoNodo.siguiente = lista.primero
 	lista.primero = nuevoNodo
 	if lista.ultimo == nil {
 		lista.ultimo = nuevoNodo
@@ -106,6 +107,8 @@ func (lista *listaEnlazada[T]) InsertarUltimo(elemento T) {
 	nuevoNodo := crearNodo(elemento)
 	if lista.ultimo != nil {
 		lista.ultimo.siguiente = nuevoNodo
+	} else {
+		lista.primero = nuevoNodo
 	}
 	lista.ultimo = nuevoNodo
 	lista.cantidad++
@@ -164,7 +167,6 @@ func (lista *listaEnlazada[T]) Largo() int {
 	return lista.cantidad
 }
 
-// Iterador interno
 func (lista *listaEnlazada[T]) Iterar(visitar func(T) bool) {
 	for actual := lista.primero; actual != nil; actual = actual.siguiente {
 		if !visitar(actual.elemento) {
@@ -173,7 +175,6 @@ func (lista *listaEnlazada[T]) Iterar(visitar func(T) bool) {
 	}
 }
 
-// devuelve una instancia del iterador externo (el struct iteradorLista)
 func (lista *listaEnlazada[T]) Iterador() IteradorLista[T] {
 	return &iteradorLista[T]{actual: lista.primero, anterior: nil, lista: lista}
 }
