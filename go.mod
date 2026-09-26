@@ -1,3 +1,3 @@
-module tp1
+module lista
 
 go 1.27.0

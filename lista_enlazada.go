@@ -1,30 +1,28 @@
 package lista
 
 const (
-	_CAPACIDAD_INICIAL = 10
-	_MENSAJE_PANICO = "La lista está vacía"
+	_CAPACIDAD_INICIAL       = 10
+	_MENSAJE_PANICO          = "La lista está vacía"
 	_MENSAJE_PANICO_ITERADOR = "El iterador termino de iterar"
 )
 
 type listaEnlazada[T any] struct {
-	primero *nodo[T]
-	ultimo  *nodo[T]
+	primero  *nodo[T]
+	ultimo   *nodo[T]
 	cantidad int
 }
 
 type iteradorLista[T any] struct {
-	actual *nodo[T]
-	lista  *listaEnlazada[T]
+	actual   *nodo[T]
+	anterior *nodo[T]
+	lista    *listaEnlazada[T]
 }
 
 type nodo[T any] struct {
-	elemento T
+	elemento  T
 	siguiente *nodo[T]
 }
 
-/*
-En caso que se invoque a VerActual, Avanzar o Borrar sobre un iterador que ya haya iterado todos los elementos, debe entrar en pánico con un mensaje El iterador termino de iterar.
-*/
 
 func (iter *iteradorLista[T]) VerActual() T {
 	if iter.actual == nil {
@@ -41,24 +39,43 @@ func (iter *iteradorLista[T]) Avanzar() {
 	if iter.actual == nil {
 		panic(_MENSAJE_PANICO_ITERADOR)
 	}
+	iter.anterior = iter.actual
 	iter.actual = iter.actual.siguiente
 }
 
 func (iter *iteradorLista[T]) Insertar(elemento T) {
 	nuevoNodo := crearNodo(elemento)
-	aux := iter.actual
+	if iter.actual == iter.lista.primero {
+		nuevoNodo.siguiente = iter.actual
+		iter.lista.primero = nuevoNodo
+		if iter.lista.ultimo == nil {
+			iter.lista.ultimo = nuevoNodo
+		}
+	} else if iter.actual == nil {
+		iter.anterior.siguiente = nuevoNodo
+		iter.lista.ultimo = nuevoNodo
+	} else {
+		nuevoNodo.siguiente = iter.actual
+		iter.anterior.siguiente = nuevoNodo
+	}
+
 	iter.actual = nuevoNodo
-	nuevoNodo.siguiente = aux
 	iter.lista.cantidad++
 }
 
 func (iter *iteradorLista[T]) Borrar() T {
 	if iter.actual == nil {
 		panic(_MENSAJE_PANICO_ITERADOR)
-	} else if iter.actual == iter.lista.ultimo {
-		
 	}
 	dato := iter.actual.elemento
+	if iter.actual == iter.lista.primero {
+		iter.lista.primero = iter.actual.siguiente
+	} else {
+		iter.anterior.siguiente = iter.actual.siguiente
+	}
+	if iter.actual == iter.lista.ultimo {
+		iter.lista.ultimo = iter.anterior
+	}
 	iter.actual = iter.actual.siguiente
 	iter.lista.cantidad--
 	return dato
@@ -147,12 +164,16 @@ func (lista *listaEnlazada[T]) Largo() int {
 	return lista.cantidad
 }
 
-//Iterador interno
-func (lista *listaEnlazada[T]) Iterar() Iterador[T] {
-
+// Iterador interno
+func (lista *listaEnlazada[T]) Iterar(visitar func(T) bool) {
+	for actual := lista.primero; actual != nil; actual = actual.siguiente {
+		if !visitar(actual.elemento) {
+			return
+		}
+	}
 }
 
-//devuelve una instancia del iterador externo (el struct iteradorLista)
+// devuelve una instancia del iterador externo (el struct iteradorLista)
 func (lista *listaEnlazada[T]) Iterador() IteradorLista[T] {
-
+	return &iteradorLista[T]{actual: lista.primero, anterior: nil, lista: lista}
 }

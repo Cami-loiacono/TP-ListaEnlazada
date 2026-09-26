@@ -9,14 +9,15 @@ type IteradorLista[T any] interface {
 	HayAlgoMas() bool
 
 	// Avanza el iterador al siguiente elemento de la lista.
+	// entra en panic si está en el final de la lista con un mensaje diciendo: "El iterador está al final de la lista"
 	Avanzar()
 
 	// Inserta un elemento en la posición actual del iterador.
-	// El elemento insertado pasa a ser el actual.
+	// El elemento insertado pasa a ser el actual y aumenta el contador de elementos de la lista.
 	Insertar(T)
 
 	// Elimina el elemento actual del iterador y lo devuelve.
-	// El elemento siguiente al eliminado pasa a ser el actual.
+	// entra en panico si el actual es nil.
 	Borrar() T
 }
 
