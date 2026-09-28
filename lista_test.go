@@ -10,7 +10,7 @@ import (
 const (
 	_MENSAJE_LISTA_VACIA        = "La lista esta vacia"
 	_MENSAJE_ITERADOR_TERMINADO = "El iterador termino de iterar"
-	_VOLUMEN                    = 10000
+	_VOLUMEN                    = 100000
 )
 
 func TestListaVaciaEsVacia(t *testing.T) {
@@ -133,8 +133,8 @@ func TestVolumenInsertarPrimero(t *testing.T) {
 	require.Equal(t, _VOLUMEN-1, lista.VerPrimero())
 	require.Equal(t, 0, lista.VerUltimo())
 
-	for i := 0; i < _VOLUMEN; i++ {
-		require.Equal(t, i, lista.BorrarUltimo())
+	for i := _VOLUMEN - 1; i >= 0; i-- {
+		require.Equal(t, i, lista.BorrarPrimero())
 	}
 	require.True(t, lista.EstaVacia())
 }
