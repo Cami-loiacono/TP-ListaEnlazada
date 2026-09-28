@@ -26,11 +26,9 @@ type Lista[T any] interface {
 	EstaVacia() bool
 
 	// InsertarPrimero agrega un elemento al principio de la lista.
-	// Si la lista está vacía, el elemento agregado será tanto el primero como el último.
 	InsertarPrimero(T)
 
 	// InsertarUltimo agrega un elemento al final de la lista.
-	// Si la lista está vacía, el elemento agregado será tanto el primero como el último.
 	InsertarUltimo(T)
 
 	// BorrarPrimero elimina el primer elemento de la lista y lo devuelve.
@@ -49,14 +47,14 @@ type Lista[T any] interface {
 	// Si está vacía, entra en pánico con un mensaje diciendo: "La lista está vacía"
 	VerUltimo() T
 
-	// Largo devuelve la cantidad de elementos enlazados en la lista.
+	// Largo devuelve la cantidad de elementos en la lista.
 	Largo() int
 
 	// Iterar recorre la lista y aplica la función visitar a cada elemento.
 	// Si la función visitar devuelve false, se detiene la iteración.
 	Iterar(visitar func(T) bool)
 
-	// Iterador devuelve un iterador de la lista.
+	// Iterador devuelve un iterador externo de la lista.
 	Iterador() IteradorLista[T]
 }
 
